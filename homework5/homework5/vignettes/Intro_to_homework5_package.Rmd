@@ -1,0 +1,88 @@
+---
+title: "Introduction to homework5 package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to homework5 package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(homework5)
+```
+
+```{r data preparation}
+#Download the omics dataset from GEO; ‘GSE33126’ is the default
+my_id <- "GSE33126"
+data<-import_GEO(my_id)
+#get expression data
+expr<-data$Expression_data
+#Also you can get pheno type data here
+pheno<-data$Phenotype_data
+anno<-data$Annotation_data
+```
+
+
+```{r log-normal data and box plot}
+#log-normalize the expression data and return box plot
+log_exp<- log_normalize_data(expr)
+```
+
+
+```{r Heatmap}
+#Make heatmap with annotation
+make_heatmap(log_exp, pheno)
+pheno1<-make_heatmap(log_exp, pheno)
+```
+
+
+```{r PCA}
+#Make PCA plot
+make_pca(log_exp, pheno1)
+```
+
+```{r DE analysis}
+#DE analysis results 
+list <- DEG_list(pheno1,log_exp,anno)
+full_results<-list[[2]]
+DEG_<-list[[1]]
+```
+
+
+```{r Visualizations}
+#Make Volcano plot
+make_volcano(full_results)
+#Make MA plot
+make_ma(full_results)
+```
+
+
+```{r Pathway analysis}
+reactome <- reactome_path(DEG_results)
+head(reactome)
+```
+
+
+```{r Perform Gene Set Enrichment analysis}
+GSEA <- GSEA(DEG_results)
+head(GSEA)
+```
+
+
+```{r Visualize pathway as a network}
+Vis_network(DEG_results, "Degradation of the extracellular matrix")
+```
+
+
+```{r Perform Disease Gene Set Enrichment analysi  }
+DGSE <- DGSE(DEG_results)
+head(DGSE)
+```
+
