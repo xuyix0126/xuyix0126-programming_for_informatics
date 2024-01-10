@@ -1,0 +1,102 @@
+---
+title: "HW4"
+author: "YIXI XU"
+date: "11/4/2023"
+output: pdf_document
+---
+
+**1.** Create a vector containing each number between 1 and 50, inclusively.
+```{r}
+v <- c(1:50)
+```
+
+a. Use your vector to construct a 5 x 10 matrix.
+```{r}
+m <- matrix(v,5,10,byrow=T)
+m
+```
+
+b. Create a logical matrix where the values of the matrix is evenly divisible by 3 or has a remainder of 1 when divided by 6.
+```{r}
+lm <- (m %% 3 == 0) | (m %% 6 == 1)
+lm
+```
+
+c. Extract the values of the matrix where the logical matrix made in part b.
+```{r}
+extract <- m[lm]
+extract
+```
+
+d. Create a function called hailstone(x). The function should determine if x is odd or even. If x is odd, multiply x by 3 and add 1, otherwise divide x by 2. Repeat this process until the number is 1. The function should return the number of the cycles that the number goes through before reaching 1.
+Apply the function that you created in part d to the values extracted in part c.
+```{r}
+hailstone <- function(x) {
+  s <- 0 
+  while (x != 1) {
+     if (x %% 2 == 1) {
+      x <- 3 * x + 1
+    } else {
+      x <- x / 2
+    }
+    s <- s + 1
+  }
+  return(s)
+}
+sapply(extract, hailstone)
+```
+
+
+**2.** Install the ISLR library and load the Auto dataset.
+```{r}
+if (!require(ISLR, quietly = TRUE)) {
+  install.packages("ISLR")
+}
+library(ISLR)
+data(Auto)
+str(Auto)
+```
+
+a.Remove qualitative data columns from the data.
+```{r}
+auto1 <- Auto[,sapply(Auto,is.numeric)]
+str(auto1)
+```
+
+b.Write a loop that will iterate through the columns and print the range of each quantitative variable.
+```{r}
+for (j in names(auto1)) {
+  min <- min(auto1[,j])
+  max <- max(auto1[,j])
+  cat(j,"is from", min, "to", max, "\n")
+}
+```
+
+c.Create a matrix containing the mean and the standard deviation of each column.
+```{r}
+mat1<-matrix(c(colMeans(auto1), sapply(auto1, sd)),ncol=2)
+colnames(mat1) <- c("Mean", "SD")
+rownames(mat1) <- c(names(auto1))
+mat1
+```
+
+d.Identify rows that have less than the mean amount of mpg. Remove those rows from the dataset.
+```{r}
+auto2 <- auto1[auto1$mpg >= mean(auto1$mpg), ]
+dim(auto2)
+```
+
+e.Recalculate the mean and standard deviation of each column now that values with below average mpg have been removed.
+```{r}
+mat2<-matrix(c(colMeans(auto2), sapply(auto2, sd)),ncol=2)
+colnames(mat2) <- c("Mean", "SD")
+rownames(mat2) <- c(names(auto2))
+mat2
+```
+
+**3.**  Comparison
+
+It's easier to create matrix and peform mean/var calculation with R than Python. In python you need to use libraries such as NumPy/Pandas
+However, it's easier and straightforward to do data manipulation with python such as compute mean/sd in each column of the dataset (with simple syntax command).
+For basic and tradtional statistical task i would perfer R but in some machine learning task such as neuro network iw would use python.
+
